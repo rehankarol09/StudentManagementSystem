@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>StudentManagementProject</id>
+    <version>1.0.0</version>
+    <authors>StudentManagementProject</authors>
+    <description>Package Description</description>
+    <dependencies>
+      <group targetFramework=".NETCoreApp3.1" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\Rehan\source\repos\StudentManagementProject\StudentManagementProject\bin\Debug\netcoreapp3.1\StudentManagementProject.runtimeconfig.json" target="lib\netcoreapp3.1\StudentManagementProject.runtimeconfig.json" />
+    <file src="C:\Users\Rehan\source\repos\StudentManagementProject\StudentManagementProject\bin\Debug\netcoreapp3.1\StudentManagementProject.dll" target="lib\netcoreapp3.1\StudentManagementProject.dll" />
+  </files>
+</package>

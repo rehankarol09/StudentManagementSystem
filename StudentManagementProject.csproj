@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <StartupObject>StudentManagementProject.StudentBusinessLayer</StartupObject>
+    <StartupObject>StudentManagementProject.CourseBusinessLayer</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

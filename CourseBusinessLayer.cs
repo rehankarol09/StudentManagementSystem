@@ -9,9 +9,13 @@ namespace StudentManagementProject
     class CourseBusinessLayer
     {
         static string connstring = "Data Source=DESKTOP-VEA4621\\SQLEXPRESS;Initial Catalog=cgstudy;Integrated Security=True";
-        List<Course> course = new List<Course>();
+         public  List<int> courseids;
+        public CourseBusinessLayer()
+        {
+            courseids = new List<int>();
+        }
 
-        public static void addCourse()
+        public  void addCourse()
         {
             Console.WriteLine("Course Name:");
             string CourseName = Console.ReadLine();
@@ -60,14 +64,25 @@ namespace StudentManagementProject
            using(SqlConnection con=new SqlConnection(connstring))
                     {
                         con.Open();
-                        SqlCommand cmd = new SqlCommand("insert into Degree values(@name,@duration,@fees,@seats,@placement,@level)", con);
+                        SqlCommand cmd = new SqlCommand("insert into Course(coursename,CourseDuration,Coursefees,seatsavailable,Course,Type,Placement)  values(@name,@duration,@fees,@seats,@Course,@Type,@Placement)", con);
                         cmd.Parameters.AddWithValue("@name",course.CourseName);
                         cmd.Parameters.AddWithValue("@duration", course.CourseDuration);
                         cmd.Parameters.AddWithValue("@fees", course.Fees);
                         cmd.Parameters.AddWithValue("seats",course.seatsavaialble);
-                        cmd.Parameters.AddWithValue("@placement",course.isplacementavailable);
-                        cmd.Parameters.AddWithValue("@level",course.Level1);
-                        int rows=cmd.ExecuteNonQuery();
+                        
+                        //cmd.Parameters.AddWithValue("@placement",course.isplacementavailable);
+                        cmd.Parameters.AddWithValue("@Course","Degree");
+                        cmd.Parameters.AddWithValue("@Type",course.Level1);
+                        if(course.isplacementavailable.Equals("true"))
+                        {
+                            cmd.Parameters.AddWithValue("@Placement", 1);
+                }
+                else
+                {
+                    cmd.Parameters.AddWithValue("@Placement", 0);
+
+                }
+                int rows=cmd.ExecuteNonQuery();
                         Console.WriteLine("Rows affected" + rows);
                     }
         }
@@ -77,49 +92,99 @@ namespace StudentManagementProject
             using (SqlConnection con = new SqlConnection(connstring))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("insert into Diploma values(@name,@duration,@fees,@seats,@type)", con);
+                SqlCommand cmd = new SqlCommand("insert into Course(coursename,CourseDuration,Coursefees,seatsavailable,Course,Type) values(@name,@duration,@fees,@seats,@course,@type)", con);
                 cmd.Parameters.AddWithValue("@name", course.CourseName);
                 cmd.Parameters.AddWithValue("@duration", course.CourseDuration);
                 cmd.Parameters.AddWithValue("@fees", course.Fees);
                 cmd.Parameters.AddWithValue("seats", course.seatsavaialble);
+                cmd.Parameters.AddWithValue("@course", "Diploma");
                 cmd.Parameters.AddWithValue("@type", course.Type1);
                 int rows = cmd.ExecuteNonQuery();
-                Console.WriteLine("Rows affected" + rows);
+                Console.WriteLine("Course Added");
             }
         }
 
-        public static void printDegreeCourse()
+        public  void printDegreeCourse()
         {
             SqlDataAdapter da1 = new SqlDataAdapter();
-            SqlDataAdapter da2 = new SqlDataAdapter();
             DataSet ds1 = new DataSet();
-            DataSet ds2 = new DataSet();
             using (SqlConnection con=new SqlConnection(connstring))
             {
                 //con.Open();
-                SqlCommand command = new SqlCommand("select * from degree",con);
-                SqlCommand command1 = new SqlCommand("select * from diploma", con);
+                SqlCommand command = new SqlCommand("select * from course",con);
+                
                 da1.SelectCommand = command;
-                da2.SelectCommand = command1;
-                da1.Fill(ds1, "Degree");
-                da2.Fill(ds2, "Diploma");
-                foreach (DataRow row in ds1.Tables["Degree"].Rows)
+              
+                da1.Fill(ds1, "Course");
+               
+                foreach (DataRow row in ds1.Tables["Course"].Rows)
                 {
+                    //courseids.Add(Convert.ToInt32(row[0]));
                     Console.WriteLine(row[1] + "\t" + row[2]+"\t"+row[3]);
-                }
-
-                foreach (DataRow row in ds2.Tables["Diploma"].Rows)
-                {
-                    Console.WriteLine(row[1] + "\t" + row[2]);
                 }
             }
         }
 
-        public static void Main(string[] a)
+        public void getIntialData()
+        {
+            courseids.Clear();
+            SqlDataAdapter da1 = new SqlDataAdapter();
+            DataSet ds1 = new DataSet();
+            using (SqlConnection con = new SqlConnection(connstring))
+            {
+                //con.Open();
+                SqlCommand command = new SqlCommand("select * from course", con);
+
+                da1.SelectCommand = command;
+
+                da1.Fill(ds1, "Course");
+
+                foreach (DataRow row in ds1.Tables["Course"].Rows)
+                {
+                    courseids.Add(Convert.ToInt32(row[0]));
+                   
+                }
+            }
+        }
+
+        public  void updateCourse(int id,double fees,int seats)
+        {
+            SqlCommand cmd;
+            
+            using(SqlConnection con=new SqlConnection(connstring))
+            {
+                con.Open();
+                cmd = new SqlCommand("procupdateCourse", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id",id);
+                cmd.Parameters.AddWithValue("@fees", fees);
+                cmd.Parameters.AddWithValue("@seatsavailable", seats);
+
+                SqlParameter output = new SqlParameter();
+                output.ParameterName="@returnvalue";
+                output.SqlDbType = SqlDbType.Int;
+                output.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(output);
+                cmd.ExecuteNonQuery();
+                string outputvalue =output.Value.ToString(); 
+                if(outputvalue.Equals("1"))
+                    {
+                       Console.WriteLine("Record Updated");
+                    }
+                else
+                {
+                    Console.WriteLine("Record not found");
+                }
+
+            }
+        }
+
+     /*   public static void Main(string[] a)
         {
             //addCourse();
-            printDegreeCourse();
+            //printDegreeCourse();
+            updateCourse(102, 9000, 67);
             Console.ReadKey();
-        }
+        }*/
     }
 }

@@ -11,9 +11,14 @@ namespace StudentManagementProject
     { 
     static string connstring = "Data Source=DESKTOP-VEA4621\\SQLEXPRESS;Initial Catalog=cgstudy;Integrated Security=True";
         Student s1 = new Student();
-        List<Student> students = new List<Student>();
+        public List<int> students;
+        
+        public StudentBusinessLayer()
+        {
+           students = new List<int>();
+        }
 
-        public static void InsertStudent(string name, DateTime dateofbirth)
+        public  void InsertStudent(string name, DateTime dateofbirth)
         {
             
             InsertintoStudent(new Student(name, dateofbirth));
@@ -41,14 +46,14 @@ namespace StudentManagementProject
                 int rows=comand.ExecuteNonQuery();
                 string id = parameter.Value.ToString();
                // Console.WriteLine("Row affted:" + rows);
-                Console.WriteLine("Id generated:", id);
-                Console.WriteLine("Rows affected" + rows);
+                
+                Console.WriteLine("Record Inserted succesfully");
             }
         }
 
-        public static void getAllStudents()
+        public  void getAllStudents()
         {
-           
+            
             SqlDataAdapter da = new SqlDataAdapter();
             DataTable dt = new DataTable();
             using (SqlConnection con=new SqlConnection(connstring))
@@ -60,14 +65,36 @@ namespace StudentManagementProject
                 da.Fill(dt);
                 foreach(DataRow row in dt.Rows)
                 {
-                    Console.WriteLine(row[0] + "\t" + row[1] + "\t" + Convert.ToDateTime(row[2]).ToString("yyyy-mm-dd") );
+                    //students.Add(Convert.ToInt32(row[0]));
+                    Console.WriteLine(row[0] + "\t" + row[1] + "\t" + Convert.ToDateTime(row[2]).ToString("yyyy-MMM-dd") );
                 }
                  
             }
         }
 
-        public static void getStudentbyId(int id)
+        public void getIntialData()
         {
+            students.Clear();
+            SqlDataAdapter da = new SqlDataAdapter();
+            DataTable dt = new DataTable();
+            using (SqlConnection con = new SqlConnection(connstring))
+            {
+                //con.Open();
+                SqlCommand cmd = new SqlCommand("procgetAllStudents", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                da.SelectCommand = cmd;
+                da.Fill(dt);
+                foreach (DataRow row in dt.Rows)
+                {
+                    students.Add(Convert.ToInt32(row[0]));
+                }
+
+            }
+        }
+
+        public  void getStudentbyId(int id)
+        {
+
             SqlDataAdapter da = new SqlDataAdapter();
             DataSet ds = new DataSet();
             using (SqlConnection con = new SqlConnection(connstring))
@@ -79,14 +106,15 @@ namespace StudentManagementProject
                 da.Fill(ds, "student");
                 foreach (DataRow row in ds.Tables["student"].Rows)
                 {
+                   
                     Console.WriteLine(row[0] + "\t" + row[1] + "\t" + Convert.ToDateTime(row[2]).ToString("yyyy-MMM-dd"));      
                 }
             }
         }
 
-        public static void UpdateStudent(int id,string name)
-        {
-            using(SqlConnection con=new SqlConnection(connstring))
+        public  void UpdateStudent(int id,string name)
+        { 
+            using (SqlConnection con=new SqlConnection(connstring))
             {
                 con.Open();
                 SqlCommand cmd = new SqlCommand("updateStudent", con);
@@ -103,7 +131,7 @@ namespace StudentManagementProject
 
         public static void DeleteStudent(int id)
         {
-            using(SqlConnection con=new SqlConnection(connstring))
+            using (SqlConnection con = new SqlConnection(connstring))
             {
                 con.Open();
                 SqlCommand cmd = new SqlCommand("deletestudent", con);
@@ -116,22 +144,5 @@ namespace StudentManagementProject
                 }
             }
         }
-
-
-        public static void Main(string[] a)
-        {
-            /*Console.WriteLine("Enter name");
-            string name = Console.ReadLine();
-            Console.WriteLine("Enter date of birth");
-            string dob = Console.ReadLine();
-            DateTime date = Convert.ToDateTime(dob);
-            //InsertStudent(name, date);*/
-            //getAllStudents();
-            //getStudentbyId(102);
-            //UpdateStudent(107, "RehanKarol");
-            DeleteStudent(105);
-
-        }
-
     } 
 }

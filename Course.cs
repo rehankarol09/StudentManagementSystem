@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
 
 namespace StudentManagementProject
 {
@@ -97,7 +95,7 @@ namespace StudentManagementProject
 
             public string Type1
             {
-            get => this.type.ToString();
+                get => this.type.ToString();
             }
 
            
